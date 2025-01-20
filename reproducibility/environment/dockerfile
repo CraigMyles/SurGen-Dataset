@@ -1,0 +1,65 @@
+# Use PyTorch image from NGC as the base image
+FROM nvcr.io/nvidia/pytorch:22.04-py3
+LABEL maintainer="CraigMyles"
+
+# arguments
+ARG LOCAL_USER
+ARG LOCAL_UID
+ARG LOCAL_GID
+
+ARG GIT_USER
+ARG GIT_TOKEN
+ARG project_name=SurGen-Dataset
+
+# set bash as current shell
+RUN chsh -s /bin/bash
+SHELL ["/bin/bash", "-c"]
+
+# install anaconda
+RUN apt-get update
+RUN apt-get install -y wget bzip2 ca-certificates libglib2.0-0 libgl1 libxext6 libsm6 libxrender1 git mercurial subversion && \
+        apt-get clean
+
+RUN apt-get install -y wget && rm -rf /var/lib/apt/lists/*
+
+# add the local user and disable their password
+RUN adduser -uid ${LOCAL_UID} --disabled-password --gecos '' ${LOCAL_USER}
+
+# add the local user to the sudo group
+RUN usermod -a -G sudo ${LOCAL_USER}
+
+# remove the password from sudo operations
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER ${LOCAL_USER}
+RUN wget \
+    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && echo "Installing Miniconda3" \
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm -f Miniconda3-latest-Linux-x86_64.sh 
+ENV PATH="/home/${LOCAL_USER}/miniconda3/bin:$PATH"
+
+USER root
+RUN rm -rf /opt/conda \
+  && conda --version \
+  && which conda
+
+USER ${LOCAL_USER}
+WORKDIR "/home/${LOCAL_USER}"
+
+RUN git clone https://github.com/CraigMyles/SurGen-Dataset.git 
+
+RUN conda update conda \
+  && conda install -n base conda-libmamba-solver \
+  && conda config --set solver libmamba \
+  && conda env create --name surgen --file=/home/${LOCAL_USER}/${project_name}/reproducibility/environment/environment.yaml --solver=libmamba
+
+RUN echo "conda activate surgen" >> ~/.bashrc
+ENV PATH /home/${LOCAL_USER}/miniconda3/envs/surgen/bin:/home/${LOCAL_USER}/miniconda3/bin:$PATH
+ENV CONDA_DEFAULT_ENV surgen
+
+RUN mkdir -p /home/$LOCAL_USER/.vscode-server/extensions \
+        /home/$LOCAL_USER/.vscode-server-insiders/extensions \
+    && chown -R $LOCAL_USER \
+        /home/$LOCAL_USER/.vscode-server \
+        /home/$LOCAL_USER/.vscode-server-insiders
