@@ -7,8 +7,13 @@
 
 
 
+
 ## Abstract:
+<img src="https://github.com/user-attachments/assets/253ad08f-1e57-4121-a721-df3424f66eb5" width="200px" align="right" />
 SurGen is a publicly available colorectal cancer dataset comprising 1,020 whole slide images (WSIs) from 843 cases. Each WSI is digitised at 40× magnification (0.1112 µm/pixel) and is accompanied by key genetic marker; <em>KRAS, NRAS, BRAF</em> as well as <em>mismatch repair (MMR) status</em> and <em>five-year survival</em> data (available for 426 cases). This repository provides standard train-validation-test splits and example scripts to facilitate machine learning experiments in computational pathology, biomarker discovery, and prognostic modelling. SurGen aims to advance cancer diagnostics by offering a consistent, high-quality dataset with rich annotations, supporting both targeted research on primary colorectal tumours and broader studies of metastatic sites.
+
+---
+
 
 <img src="https://github.com/user-attachments/assets/4724e007-96f3-4172-bdbc-b00324966300" width="100%" align="center" />
 
