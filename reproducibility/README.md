@@ -79,12 +79,12 @@ python create_patches.py --source ~/data/SR1482_WSIs/ \
 --patch_size 224 --step_size 224 --seg --patch --target_mpp 1.0 --storage_format zarr
 ```
 
-#### SR382 Cohort:
+#### SR386 Cohort:
 
 ```bash
-python create_patches.py --source ~/data/SR382_WSIs/ \
---save_dir ~/data/SR382_WSIs/zarr/one_point_zero_mpp/224 \
---process_list ~/SurGen-Dataset/reproducibility/dataset_csv/segment_params_SR382.csv \
+python create_patches.py --source ~/data/SR386_WSIs/ \
+--save_dir ~/data/SR386_WSIs/zarr/one_point_zero_mpp/224 \
+--process_list ~/SurGen-Dataset/reproducibility/dataset_csv/segment_params_SR386.csv \
 --patch_size 224 --step_size 224 --seg --patch --target_mpp 1.0 --storage_format zarr
 ```
 
