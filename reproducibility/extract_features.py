@@ -24,6 +24,7 @@ import gdown
 from pathlib import Path
 import wandb
 import timm
+from timm.layers import SwiGLUPacked
 from huggingface_hub import login, hf_hub_download
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 print(f"Running on {device}")
@@ -91,7 +92,20 @@ def compute_w_loader(file_path, output_path, wsi, models,
 			# Extract features from the batch with each model
 			# features = {}
 			for name, model in models.items():
-				features = model(batch).cpu().numpy()
+				
+				if name == "virchow2":
+						with torch.inference_mode(), torch.autocast(device_type="cuda", dtype=torch.float16):
+							output = model(batch)  # Shape: (batch_size, 261, 1280)
+
+						class_token = output[:, 0]    # (batch_size, 1280)
+						patch_tokens = output[:, 5:]  # (batch_size, 256, 1280) - Ignore register tokens
+						features = torch.cat([class_token, patch_tokens.mean(1)], dim=-1)  # (batch_size, 2560)
+
+				else:
+					features = model(batch)
+				
+				features =  features.cpu().numpy()
+
 				asset_dict = {'features': features, 'coords': coords}
 				#output patch must include the model name
 				model_output_path = os.path.join(os.path.dirname(output_path), name, os.path.basename(output_path)) # ./h5_files/model_name/wsi_name.zarr
@@ -230,6 +244,84 @@ def load_models(feature_extractors):
 			model.load_state_dict(torch.load(weights_path, map_location="cpu"), strict=True)
 			models['uni'] = model
 
+		elif feature_extractor == 'uni2-h':
+			#!Load MahmoodLab/UNI2-h model
+			# Define the directory where you want to save the model weights
+			local_dir = Path.home() / "data" / "pretrained_models" # Change this path to the directory where you want to save the weights
+			# Ensure the directory exists
+			local_dir.mkdir(parents=True, exist_ok=True)
+			# Specify the path where you want to save the weights file
+			weights_path = local_dir / "uni2-h.pth"
+
+			# Check if the model weights already exist
+			if not weights_path.exists():
+					print(f"Downloading weights for {feature_extractor} model...")
+					# Download the file and save it as "uni2-h.pth"
+					#login to huggingface
+					login()
+					hf_hub_download(
+							repo_id="MahmoodLab/UNI2-h",
+							filename="pytorch_model.bin",
+							cache_dir=local_dir,  # Specify where to save the file
+							force_filename="uni2-h.pth"  # Force the downloaded file to be saved as "uni2-h.pth"
+					)
+					print(f"Downloaded {feature_extractor} model weights to {weights_path}")
+			else:
+					print(f"Weights for {feature_extractor} model found at {weights_path}")
+			
+			timm_kwargs = {
+            'model_name': 'vit_giant_patch14_224',
+            'img_size': 224, 
+            'patch_size': 14, 
+            'depth': 24,
+            'num_heads': 24,
+            'init_values': 1e-5, 
+            'embed_dim': 1536,
+            'mlp_ratio': 2.66667*2,
+            'num_classes': 0, 
+            'no_embed_class': True,
+            'mlp_layer': timm.layers.SwiGLUPacked, 
+            'act_layer': torch.nn.SiLU, 
+            'reg_tokens': 8, 
+            'dynamic_img_size': True
+        }
+			model = timm.create_model(
+					pretrained=False, **timm_kwargs
+			)
+			# model.load_state_dict(torch.load(weights_path, map_location="cpu"), strict=True)
+			model.load_state_dict(torch.load(weights_path, map_location="cpu"), strict=True)
+
+			models['uni2-h'] = model
+
+		elif feature_extractor == 'virchow2':
+			#!Load paige-ai/Virchow2 model
+			# # Define the directory where you want to save the model weights
+			# local_dir = Path.home() / "data" / "pretrained_models" # Change this path to the directory where you want to save the weights
+			# # Ensure the directory exists
+			# local_dir.mkdir(parents=True, exist_ok=True)
+			# # Specify the path where you want to save the weights file
+			# weights_path = local_dir / "virchow2.pth"
+
+			# # Check if the model weights already exist
+			# if not weights_path.exists():
+			# 		print(f"Downloading weights for {feature_extractor} model...")
+			# 		# Download the file and save it as "virchow2.pth"
+			# 		#login to huggingface
+			# 		login()
+			# 		hf_hub_download(
+			# 				repo_id="paige-ai/Virchow2",
+			# 				filename="pytorch_model.bin",
+			# 				cache_dir=local_dir,  # Specify where to save the file
+			# 				force_filename="virchow2.pth"  # Force the downloaded file to be saved as "virchow2.pth"
+			# 		)
+			# 		print(f"Downloaded {feature_extractor} model weights to {weights_path}")
+			# else:
+			# 		print(f"Weights for {feature_extractor} model found at {weights_path}")
+			
+			model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
+
+			models['virchow2'] = model
+
 		else:
 			raise ValueError('Invalid feature_extractor name')
 	return models
@@ -248,7 +340,7 @@ parser.add_argument('--target_patch_size', type=int, default=-1)
 parser.add_argument('--storage_format', type=str, default='h5', choices=['h5', 'zarr'],
                     help='format for storing the output files, choices are h5py (h5) or zarr')
 parser.add_argument('--feature_extractor', nargs='+', default=['resnet50'], 
-                    choices=['resnet50', 'resnet50-b', 'owkin', 'ctranspath', 'uni'],
+                    choices=['resnet50', 'resnet50-b', 'owkin', 'ctranspath', 'uni', 'uni2-h', 'virchow2'],
                     help='List of feature extractors to use')
 
 args = parser.parse_args()
