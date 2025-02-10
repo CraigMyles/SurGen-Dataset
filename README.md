@@ -3,7 +3,7 @@
 </h1>
 
 
-[Download Data](https://doi.org/10.6019/S-BIAD1285) | [Reproducibility](./reproducibility) | [Notebooks](./notebooks) | [Pre-encoded UNI embeddings](https://zenodo.org/records/14047723) | [GitHub Repository](https://github.com/CraigMyles/SurGen-Dataset) | [Citation](#reference)
+[Download Data](https://doi.org/10.6019/S-BIAD1285) | [ArXiv Preprint](https://arxiv.org/abs/2502.04946) | [Reproducibility](./reproducibility) | [Notebooks](./notebooks) | [Pre-encoded UNI embeddings](https://zenodo.org/records/14047723) | [Citation](#reference)
 
 
 
