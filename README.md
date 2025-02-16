@@ -11,7 +11,7 @@ SurGen is a publicly available colorectal cancer dataset comprising 1,020 whole 
 
 ---
 
-<img src="https://github.com/user-attachments/assets/4724e007-96f3-4172-bdbc-b00324966300" width="100%" align="center" />
+<img src="https://github.com/user-attachments/assets/6ad0c3a8-dddc-44f2-bf2b-d2d702e6e5e6" width="100%" align="center" />
 
 ---
 
