@@ -118,7 +118,7 @@ These notebooks provide a practical starting point for using the dataset and app
 
 ---
 
-> **Disclaimer:** The CSV files in the "reproducibility/dataset_csv" folder are not covered by the same as the source code. These data files are dedicated to the public domain under **CC0**.
+> **Disclaimer:** The CSV files in the "reproducibility/dataset_csv" folder are not covered by the same license as the source code. These data files are dedicated to the public domain under **CC0**.
 
 ## Reference
 If you find this dataset or repository useful, please consider citing the following:
