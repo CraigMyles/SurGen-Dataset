@@ -2,10 +2,9 @@
   SurGen: 1020 H&E-stained Whole Slide Images With Survival and Genetic Markers
 </h1>
 
+[Download Data](https://doi.org/10.6019/S-BIAD1285) | [Journal Article](https://doi.org/10.1093/gigascience/giaf086) | [Reproducibility](./reproducibility) | [Notebooks](./notebooks) | [Pre-encoded UNI embeddings](https://zenodo.org/records/14047723) | [Citation](#reference)
 
-[Download Data](https://doi.org/10.6019/S-BIAD1285) | [ArXiv Preprint](https://arxiv.org/abs/2502.04946) | [Reproducibility](./reproducibility) | [Notebooks](./notebooks) | [Pre-encoded UNI embeddings](https://zenodo.org/records/14047723) | [Citation](#reference)
-
-## Abstract:
+## Summary:
 <img src="https://github.com/user-attachments/assets/253ad08f-1e57-4121-a721-df3424f66eb5" width="200px" align="right" />
 SurGen is a publicly available colorectal cancer dataset comprising 1,020 whole slide images (WSIs) from 843 cases. Each WSI is digitised at 40× magnification (0.1112 µm/pixel) and is accompanied by key genetic marker; <em>KRAS, NRAS, BRAF</em> as well as <em>mismatch repair (MMR) status</em> and <em>five-year survival</em> data (available for 426 cases). This repository provides standard train-validation-test splits and example scripts to facilitate machine learning experiments in computational pathology, biomarker discovery, and prognostic modelling. SurGen aims to advance cancer diagnostics by offering a consistent, high-quality dataset with rich annotations, supporting both targeted research on primary colorectal tumours and broader studies of metastatic sites.
 
@@ -124,12 +123,16 @@ These notebooks provide a practical starting point for using the dataset and app
 If you find this dataset or repository useful, please consider citing the following:
 ```bibtex
 @article{myles2025surgen,
-  title={SurGen: 1020 H\&E-stained Whole Slide Images With Survival and Genetic Markers},
+  title={SurGen: 1020 H\&E-stained whole-slide images with survival and genetic markers},
   author={Myles, Craig and Um, In Hwa and Marshall, Craig and Harris-Birtill, David and Harrison, David J},
-  journal={arXiv preprint arXiv:2502.04946},
-  year={2025}
+  journal={GigaScience},
+  volume={14},
+  pages={giaf086},
+  year={2025},
+  publisher={Oxford University Press}
 }
-
+```
+```bibtex
 @inproceedings{myles2024leveraging,
   title={Leveraging foundation models for enhanced detection of colorectal cancer biomarkers in small datasets},
   author={Myles, Craig and Um, In Hwa and Harrison, David J and Harris-Birtill, David},
