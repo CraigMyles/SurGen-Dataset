@@ -4,7 +4,11 @@
 
 [Download Data](https://doi.org/10.6019/S-BIAD1285) | [Journal Article](https://doi.org/10.1093/gigascience/giaf086) | [Reproducibility](./reproducibility) | [Notebooks](./notebooks) | [Pre-encoded UNI embeddings](https://zenodo.org/records/14047723) | [Citation](#reference)
 
-## Summary:
+## Updates
+
+**2026-08-03**: Whole slide images are now available in OME-Zarr format! Zipped `.ome.zarr` files can be downloaded from the [BioImage Archive](https://doi.org/10.6019/S-BIAD1285).
+
+## Summary
 <img src="https://github.com/user-attachments/assets/253ad08f-1e57-4121-a721-df3424f66eb5" width="200px" align="right" />
 SurGen is a publicly available colorectal cancer dataset comprising 1,020 whole slide images (WSIs) from 843 cases. Each WSI is digitised at 40× magnification (0.1112 µm/pixel) and is accompanied by key genetic marker; <em>KRAS, NRAS, BRAF</em> as well as <em>mismatch repair (MMR) status</em> and <em>five-year survival</em> data (available for 426 cases). This repository provides standard train-validation-test splits and example scripts to facilitate machine learning experiments in computational pathology, biomarker discovery, and prognostic modelling. SurGen aims to advance cancer diagnostics by offering a consistent, high-quality dataset with rich annotations, supporting both targeted research on primary colorectal tumours and broader studies of metastatic sites.
 
@@ -20,13 +24,15 @@ SurGen is split into two sub-cohorts:
 1. **SR386** – Primary colorectal cancer (427 WSIs) with five-year survival data.
 2. **SR1482** – Colorectal cancer cases (593 WSIs) including metastatic lesions (liver, lung, peritoneum), with full biomarker data.
 
-Each WSI is stored in Zeiss `.CZI` format. For convenience, precomputed patch embeddings (extracted using the UNI foundation model) are also available.
+Each WSI is stored in Zeiss `.CZI` format and additionally, as of August 2026, in zipped `.ome.zarr` format. For convenience, precomputed patch embeddings (extracted using the UNI foundation model) are also available.
 
 ---
 
 ## Downloading the Dataset
 
 The SurGen dataset is hosted on the **EBI FTP server**. You can download the Whole Slide Images (WSIs) for **both sub-cohorts (SR386 and SR1482)** using `wget`, an FTP client, or you can download directly from the EBI [website](https://doi.org/10.6019/S-BIAD1285).
+
+The WSIs are provided in two formats: the original Zeiss `.CZI` files, and zipped OME-Zarr versions of the same slides. Choose whichever format suits your workflow - you do not need both.
 
 ### **Option 1: Using `wget`**
 For most, the easiest way to download the WSIs is via `wget`:
@@ -41,7 +47,12 @@ wget -r -np -nH --cut-dirs=6 ftp://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/285/S-BI
 wget -r -np -nH --cut-dirs=6 ftp://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/285/S-BIAD1285/Files/SR1482_WSIs/
 ```
 
-This will download the respective data into `SR386_WSIs/` and `SR1482_WSIs/` folders in your current directory.
+#### **Alternatively, download the OME-Zarr versions (both cohorts):**
+```bash
+wget -r -np -nH --cut-dirs=6 ftp://ftp.ebi.ac.uk/biostudies/fire/S-BIAD/285/S-BIAD1285/Files/ome-zarr/
+```
+
+Each command downloads into its own folder (`SR386_WSIs/`, `SR1482_WSIs/`, or `ome-zarr/`) in your current directory.
 - `-np` no parent (prevents downloading higher-level directories).
 - `-nH` no host (ignores 'ftp.ebi.ac.uk' in the local directory structure).
 - `--cut-dirs=6` ensures you get a clean directory structure without extra nested folders.
@@ -68,6 +79,11 @@ If you prefer to use FTP, follow these steps:
    cd /biostudies/fire/S-BIAD/285/S-BIAD1285/Files/SR1482_WSIs
    ```
 
+   Or for the **OME-Zarr** files (both cohorts):
+   ```bash
+   cd /biostudies/fire/S-BIAD/285/S-BIAD1285/Files/ome-zarr
+   ```
+
 3. Enable **binary mode** to correctly transfer `.CZI` files:
    ```bash
    binary
@@ -77,6 +93,11 @@ If you prefer to use FTP, follow these steps:
    ```bash
    prompt
    mget *.czi
+   ```
+   Or, if you are in the `ome-zarr` directory, download the zipped OME-Zarr files instead:
+   ```bash
+   prompt
+   mget *.zip
    ```
 5. Close the ftp connection:
    ```bash
